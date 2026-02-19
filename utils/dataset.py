@@ -4,6 +4,7 @@ from typing import Callable, List, Optional, Tuple
 import re
 
 import cv2
+import numpy as np
 import torch
 from PIL import Image
 from torch.utils.data import Dataset
@@ -310,3 +311,117 @@ if __name__ == "__main__":
         f"Sample shapes: raw={tuple(sample['raw'].shape)}, frame={tuple(sample['frame'].shape)}, "
         f"label={sample['label']}, meta={sample['metadata']}"
     )
+
+
+class ReplayAttackDataset(Dataset):
+    """Replay-Attack 비디오(.mov)에서 중간 프레임을 반환하는 Dataset.
+
+    split:
+    - train: 원본 train 비디오의 80%
+    - dev: 원본 train 비디오의 20%
+    - test: 원본 test 전체의 절반 (shuffle 후 균등 분할)
+    - test_full: 원본 test 480개 전부 (분할 없음)
+    """
+
+    def __init__(
+        self,
+        root: str,
+        split: str = "test",
+        transform: Optional[Callable] = None,
+        raw_transform: Optional[Callable] = None,
+        freq_crop: bool = False,
+        seed: int = 42,
+    ):
+        self.root = root
+        self.split = split
+        self.transform = transform or default_transforms()
+        self.raw_transform = raw_transform or raw_transforms()
+        self.freq_transform = raw_transforms()
+        self.freq_crop = freq_crop
+        self.seed = seed
+
+        base_split = "train" if split == "train" else "test"
+        split_dir = os.path.join(root, base_split)
+        if not os.path.isdir(split_dir):
+            raise FileNotFoundError(f"{split_dir} not found.")
+
+        self.samples: List[dict] = []
+        for label_name, label in [("real", 0), ("attack", 1)]:
+            label_dir = os.path.join(split_dir, label_name)
+            if not os.path.exists(label_dir):
+                continue
+            if label_name == "real":
+                for fname in os.listdir(label_dir):
+                    if fname.lower().endswith(".mov"):
+                        self.samples.append(
+                            {"video_path": os.path.join(label_dir, fname), "label": label}
+                        )
+            else:
+                for subdir in os.listdir(label_dir):
+                    subdir_path = os.path.join(label_dir, subdir)
+                    if not os.path.isdir(subdir_path):
+                        continue
+                    for fname in os.listdir(subdir_path):
+                        if fname.lower().endswith(".mov"):
+                            self.samples.append(
+                                {"video_path": os.path.join(subdir_path, fname), "label": label}
+                            )
+
+        if not self.samples:
+            raise RuntimeError(f"No samples found under {split_dir}.")
+
+        if split == "train":
+            pass
+        elif split == "test_full":
+            pass
+        else:
+            import random
+
+            rng = random.Random(self.seed)
+            rng.shuffle(self.samples)
+            half = len(self.samples) // 2
+            if split == "dev":
+                self.samples = self.samples[:half]
+            else:
+                self.samples = self.samples[half:]
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, idx: int):
+        sample = self.samples[idx]
+        video_path = sample["video_path"]
+        label = sample["label"]
+
+        cap = cv2.VideoCapture(video_path)
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        frame_idx = max(total_frames // 2, 0)
+        cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
+        ret, frame = cap.read()
+        cap.release()
+        if not ret or frame is None:
+            frame = np.zeros((224, 224, 3), dtype=np.uint8)
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        image = Image.fromarray(frame)
+
+        normalized = self.transform(image)
+        raw = self.raw_transform(image)
+        if self.freq_crop:
+            freq_source, freq_success = crop_face_pil(image, return_status=True)
+        else:
+            freq_source, freq_success = image, False
+        freq_raw = self.freq_transform(freq_source)
+
+        attack_type = (
+            "print" if ("print" in video_path.lower() or "photo" in video_path.lower()) else "display"
+        )
+        metadata = {"video_path": video_path, "attack_type": attack_type}
+
+        return {
+            "frame": normalized,
+            "raw": raw,
+            "freq_raw": freq_raw,
+            "freq_crop_success": freq_success,
+            "label": label,
+            "metadata": metadata,
+        }

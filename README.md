@@ -11,13 +11,16 @@ MSU-MFSD로 학습한 뒤 Replay-Attack에서 평가/파인튜닝하며,
 
 ## Highlights (Replay-Attack, Fine-tuned)
 
-### Best Performance
-- **Confidence-Adaptive (권장)**: Overall **98.96%**, FAR **1.25%**, FRR **1.00%**, HTER **1.13%**  
-  - **Frequency 호출률: 4.17%** (효율성 극대화)
-  - AUC: **0.9978**, EER: **1.25%**
+- **Texture CNN**: Overall **98.54%**, FAR **1.25%**, FRR **1.50%**, HTER **1.38%** (Test 480개)
+  - Train 360 / Test 480 완전 분리
+  - Video-level: Frame과 동일 (97.88%)
+- **Adaptive (누수 제거)**: Overall **98.75%** (Test 240개, 1회 평가), FAR/FRR/HTER 안정적
+  - Train 360 / Dev 240 / Test 240 분할
+  - Threshold **0.55** (DEV only)
+  - Video-level: **98.75%**
+  - Frequency 호출: **1.25%**
 
 ### Component Performance
-- **Texture CNN**: Overall **98.54%**, FAR **1.25%**, FRR **1.50%**
 - **Frequency CNN**: Overall **95.21%**, FAR **16.25%**, FRR **2.50%**
 - **Baseline (ResNet18)**: Overall **91.25%** (cross-dataset, no FT)
 
@@ -28,7 +31,7 @@ MSU-MFSD로 학습한 뒤 Replay-Attack에서 평가/파인튜닝하며,
   - → Texture shows **17.58%p smaller degradation**
 
 ### Key Findings
-- Tail risk: 6 Spoof failures concentrated on client 11, 104 (high-def prints)
+- Tail risk: Client 011(FRR 20%), 104(FAR 25%)
 - Texture FN avg confidence: **79.56%** vs TP: **98.23%** (18.67%p gap)
 - Frequency vulnerable to simple backgrounds (16 Live false positives)
 
@@ -37,12 +40,25 @@ MSU-MFSD로 학습한 뒤 Replay-Attack에서 평가/파인튜닝하며,
 ---
 
 ## Key Contributions
-1. **Domain Gap Quantification**: Physical feature learning (Texture) reduces cross-dataset degradation by 17.58%p vs Baseline
-2. **Confidence-Adaptive System**: Achieves 98.96% with 96% efficiency (4.17% Frequency calls)
-3. **Tail Risk Analysis**: Client-specific vulnerabilities identified via confidence distribution
-4. **Operational Strategies**: 5 deployment options for different security-UX trade-offs
+1. **Cross-dataset Generalization**: Texture domain gap -10% vs Baseline -28%
+2. **Leak-Free Evaluation**: Train/Dev/Test split, Dev-only threshold tuning
+3. **Tail Risk Analysis**: Client 011(FRR 20%), 104(FAR 25%)
+4. **Video-level Validation**: Frame≈Video consistency
+5. **Confidence-Adaptive Framework**: Texture first + conditional Frequency calls
 
 ---
+
+## Data Splits (Leakage-Free)
+
+- **train**: 360 videos (fine-tuning)
+- **dev**: 240 videos (threshold selection only)
+- **test**: 240 videos (final evaluation, exactly once)
+- **test_full**: 480 videos (reference, 원본 test set)
+
+- **Threshold Selection**
+  - Grid search on **dev** only
+  - **test**는 딱 한 번만 평가 (threshold 미사용)
+  - 정보 누수 없이 Texture/Adaptive 평가 분리
 
 ## Figures
 - `roc_curves.png` — Baseline/Texture/Frequency ROC comparison
@@ -62,3 +78,64 @@ python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
+
+## Data Preparation
+
+### 1. Download Datasets
+- **MSU-MFSD**: [Download link](http://biometrics.cse.msu.edu/Publications/Databases/MSU_MFSD/)
+- **Replay-Attack**: [Download link](https://www.idiap.ch/en/scientific-research/data/replayattack)
+
+### 2. Extract to `data/` folder
+```bash
+data/
+├── MSU-MFSD/
+│   ├── scene01/
+│   │   ├── real/
+│   │   └── attack/
+│   └── ...
+└── replay-attack/
+    └── datasets/fas_pure_data/Idiap-replayattack/
+        ├── train/
+        └── test/
+```
+
+### 3. (Optional) Precompute Feature Cache
+```bash
+python utils/precompute_features.py
+```
+This creates `data/feature_cache.pt` (2.3MB) for faster multi-expert training.
+```
+
+---
+
+## 🚀 최종 .gitignore
+```
+# Data (exclude large datasets)
+data/MSU-MFSD/
+data/replay-attack/
+data/*.pt
+
+# Checkpoints
+checkpoints/
+*.pth
+
+# Results (auto-generated)
+results/
+*.png
+*.jpg
+
+# Python
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride

@@ -49,6 +49,7 @@ class ReplayAttackDataset(Dataset):
         transform: Optional[Callable] = None,
         raw_transform: Optional[Callable] = None,
         freq_crop: bool = False,
+        seed: int = 42,
     ):
         self.root = root
         self.split = split
@@ -56,8 +57,10 @@ class ReplayAttackDataset(Dataset):
         self.raw_transform = raw_transform or raw_transforms()
         self.freq_transform = raw_transforms()
         self.freq_crop = freq_crop
+        self.seed = seed
 
-        split_dir = os.path.join(root, split)
+        base_split = "train" if split in {"train", "dev"} else split
+        split_dir = os.path.join(root, base_split)
         if not os.path.isdir(split_dir):
             raise FileNotFoundError(f"{split_dir} not found.")
 
@@ -83,6 +86,19 @@ class ReplayAttackDataset(Dataset):
 
         if not self.samples:
             raise RuntimeError(f"No samples found under {split_dir}.")
+
+        # train split을 train/dev로 고정 분할 (누수 방지)
+        if split in {"train", "dev"}:
+            import random
+
+            rng = random.Random(self.seed)
+            idxs = list(range(len(self.samples)))
+            rng.shuffle(idxs)
+            n_train = int(len(idxs) * 0.8)
+            train_idxs = idxs[:n_train]
+            dev_idxs = idxs[n_train:]
+            chosen = train_idxs if split == "train" else dev_idxs
+            self.samples = [self.samples[i] for i in chosen]
 
     def __len__(self):
         return len(self.samples)

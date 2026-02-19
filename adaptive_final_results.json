@@ -1,0 +1,35 @@
+{
+  "seed": 42,
+  "threshold_from_dev": 0.55,
+  "frame_level": {
+    "overall": 0.9875,
+    "live": 0.9772727272727273,
+    "spoof": 0.9897959183673469,
+    "far": 0.022727272727272728,
+    "frr": 0.01020408163265306,
+    "hter": 0.016465677179962893,
+    "tp": 194,
+    "tn": 43,
+    "fp": 1,
+    "fn": 2,
+    "freq_call": 0.0125
+  },
+  "video_level": {
+    "overall": 0.9875,
+    "live": 1.0,
+    "spoof": 0.9846938775510204,
+    "far": 0.0,
+    "frr": 0.015306122448979591,
+    "hter": 0.007653061224489796,
+    "tp": 193,
+    "tn": 44,
+    "fp": 0,
+    "fn": 3,
+    "freq_call": 0.005833333333333334,
+    "n_videos": 240
+  },
+  "checkpoints": {
+    "texture": "checkpoints/cross/texture.pth",
+    "frequency": "checkpoints/cross/frequency_asymmetric.pth"
+  }
+}

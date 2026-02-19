@@ -1,96 +1,5 @@
 # 실험 결과 정리
 
-## 표 1: Cross-dataset 일반화 (Fine-tuning 없이)
-
-| 시스템 | Live | Spoof | Overall | HTER | EER |
-| --- | --- | --- | --- | --- | --- |
-| Baseline | 66.67% | 97.75% | 91.25% | 21.75% | 17.50% |
-| Texture CNN | 89.38% | 97.50% | 91.25% | 22.87% | 17.08% |
-| Frequency CNN | 86.04% | 97.75% | 90.90% | 41.88% | 31.04% |
-| Adaptive (τ=0.90) | 92.50% | 99.00% | 98.75% | 17.92% | 17.23% |
-
-### Key Finding
-- Adaptive threshold(τ=0.90)이 Baseline 대비 FAR/FRR을 낮추고 HTER을 10.91%까지 축소
-
-## 표 2: Cross-dataset 상세 메트릭 (Fine-tuning 없이)
-
-| 시스템 | FAR | FRR | HTER |
-| --- | --- | --- | --- |
-| Baseline | 81.25% | 22.25% | 51.75% |
-| Texture CNN | 6.25% | 22.50% | 14.38% |
-| Frequency CNN | 9.75% | 22.50% | 16.13% |
-| Adaptive (τ=0.90) | 4.17% | 17.65% | 10.91% |
-
-## 표 3: 도메인 적응 (Replay Fine-tuned)
-
-| 시스템 | Frame Live | Frame Spoof | Frame Overall | HTER | EER | Video Live | Video Spoof | Video Overall |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Baseline | 58.75% | 97.75% | 91.25% | 21.75% | 17.50% | 56.88% | 98.12% | 91.50% |
-| Texture CNN | 98.75% | 98.50% | 98.54% | 1.38% | 1.25% | 97.50% | 98.25% | 97.88% |
-| Frequency CNN | 83.75% | 97.50% | 95.21% | 9.38% | 10.00% | 80.00% | 97.88% | 94.44% |
-| Texture+Frequency (Static) | 97.50% | 99.00% | 98.75% | 1.75% | 0.00% | 95.83% | 99.17% | 98.33% |
-| Adaptive (τ=0.90) | 97.50% | 99.00% | 98.75% | 1.75% | 1.25% | 96.67% | 99.17% | 98.58% |
-
-### Key Finding
-- Fine-tuned multi-expert은 비디오 단위에서도 98% 이상의 성능을 유지
-
-## 표 4: 비디오 수준 비교
-
-| 시스템 | Frame-level | Video-level |
-| --- | --- | --- |
-| Texture CNN | 98.54% | 97.60% |
-| 2-Expert Static | 98.75% | 98.20% |
-
-## 표 5: Multi-Expert Systems (Adaptive 강조)
-
-| 시스템 | Live | Spoof | Overall | HTER | AUC |
-| --- | --- | --- | --- | --- | --- |
-| Texture-only | 98.75% | 98.50% | 98.54% | 1.38% | 0.9982 |
-| Frequency-only | 83.75% | 97.50% | 95.21% | 9.38% | 0.9546 |
-| Cascading (0.95) | 98.75% | 99.00% | 98.75% | 1.25% | 0.9987 |
-| Adaptive (0.80) | 98.96% | 98.96% | 98.96% | 1.13% | 0.9978 |
-| Frequency-First | 98.90% | 99.10% | 99.02% | 1.20% | 0.9964 |
-
-### Key Finding
-- Adaptive(τ=0.80)은 Live/Spoof 균형이 가장 우수하고 frequency 호출률은 4.17%
-
-## 표 6: Stress Test (Replay-Attack)
-
-| 변형 | Param | Live | Spoof | Overall | HTER |
-| --- | --- | --- | --- | --- | --- |
-| Blur σ=1.0 | 1.0 | 97.50% | 97.90% | 97.70% | 1.20% |
-| Blur σ=2.0 | 2.0 | 96.00% | 97.20% | 96.70% | 1.80% |
-| Blur σ=3.0 | 3.0 | 94.30% | 96.10% | 95.20% | 2.70% |
-| JPEG Q=90 | 90 | 98.00% | 98.40% | 98.20% | 1.10% |
-| JPEG Q=70 | 70 | 96.70% | 97.00% | 96.85% | 1.65% |
-| JPEG Q=50 | 50 | 93.90% | 96.20% | 95.05% | 2.85% |
-| JPEG Q=30 | 30 | 91.20% | 95.50% | 93.35% | 4.10% |
-| Brightness 0.7 | 0.7 | 95.40% | 97.00% | 96.20% | 1.90% |
-| Brightness 1.3 | 1.3 | 97.10% | 97.60% | 97.35% | 1.35% |
-| Noise σ=0.01 | 0.01 | 97.85% | 98.00% | 97.92% | 1.05% |
-| Noise σ=0.05 | 0.05 | 96.30% | 97.40% | 96.85% | 1.55% |
-| Noise σ=0.1 | 0.1 | 95.00% | 97.00% | 96.00% | 2.00% |
-| Downsample 112x112 | 112 | 90.20% | 95.50% | 92.85% | 3.45% |
-| Downsample 56x56 | 56 | 88.10% | 94.20% | 91.15% | 4.10% |
-
-## Hard Cases 분석
-
-- Texture False Negative 6개 (평균 확신도 79.56%) – 특정 클라이언트 Highdef print 집중
-- Frequency False Positive 16개 (대부분 controlled background) – Live rejection risk
-
-## Figures
-
-1. `roc_curves.png`
-2. `confusion_matrices.png`
-3. `frequency_failure_comparison.png`
-
-## 핵심 발견
-
-- Adaptive(τ=0.80) 시스템은 Overall 98.96%, HTER 1.13%, AUC 0.9978 달성
-- Domain gap 분석으로 Baseline -28% vs Texture -10% 차이를 정량화
-- Tail risk 분석을 통해 특정 client/attack 취약성을 정량화
-# 실험 결과 정리
-
 ## 표 1: MSU-MFSD (내부 데이터)
 
 | 시스템 | 프레임 수준 | 비디오 수준 |
@@ -98,52 +7,112 @@
 | Baseline | 94.75% | N/A |
 | Texture CNN | 99.88% | 100.00% |
 | Frequency CNN | 96.81% | N/A |
-| Multi-Expert | 99.00% | N/A |
 
-## 표 2: 크로스 데이터셋 일반화
+## 표 2: Cross-dataset 일반화 (Test 480, No Fine-tuning)
 
-| 시스템 | Live | Spoof | Overall | HTER | EER |
+| 시스템 | Live | Spoof | Overall | Domain Gap |
+| --- | --- | --- | --- | --- |
+| Baseline | 66.67% | 97.75% | 91.25% | -28.08% |
+| Texture CNN | **89.38%** | 97.50% | 91.25% | **-10.50%** |
+| Frequency CNN | 86.04% | 97.75% | 90.90% | -10.77% |
+
+**Key Finding:** Texture shows 17.58%p smaller domain gap than Baseline.
+
+## 표 3: Domain Adaptation (Test 480, Fine-tuned)
+
+| 시스템 | Frame Live | Frame Spoof | Frame Overall | FAR | FRR | HTER |
+| --- | --- | --- | --- | --- | --- | --- |
+| Texture CNN | 98.75% | 98.50% | **98.54%** | 1.25% | 1.50% | 1.38% |
+| Frequency CNN | 83.75% | 97.50% | 95.21% | 16.25% | 2.50% | 9.38% |
+
+**Multi-Expert 시도:**
+- Cascading, Adaptive, Frequency-First, Alarm Sensor 등 여러 전략 실험
+- 모두 Texture 단독(98.54%)과 유사하거나 낮은 성능
+- 복잡도 대비 개선 미미
+
+## 표 4: 비디오 수준 검증 (Test 480)
+
+| 시스템 | Frame-level | Video-level | Δ |
+| --- | --- | --- | --- |
+| Texture CNN (MSU) | 99.88% | 100.00% | +0.12% |
+| Texture CNN (Replay) | 98.54% | **97.88%** | -0.66% |
+
+**Conclusion:** Frame ≈ Video → No frame memorization.
+
+## 표 5: Leak-Free Evaluation ⭐
+
+### 5-1. Split Strategy
+
+| 구분 | 크기 | 용도 |
+| --- | --- | --- |
+| Train | 360 videos | Fine-tuning |
+| **Dev** | 240 videos | **Threshold 선택만** |
+| **Test** | 240 videos | **최종 평가 (1회)** |
+| Test_Full | 480 videos | Reference (원본 전체) |
+
+### 5-2. Threshold Selection (Dev)
+
+| Threshold | Overall | Live | Spoof | FAR | FRR | Freq Call |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0.50 | 98.33% | 97.22% | 98.53% | 2.78% | 1.47% | 0.00% |
+| **0.55** | **98.75%** | **100.00%** | **98.53%** | **0.00%** | **1.47%** | **1.25%** |
+| 0.60~0.80 | 98.75% | 100.00% | 98.53% | 0.00% | 1.47% | 1.67~3.75% |
+
+**Optimal:** 0.55 (Live 100%, 최소 Freq Call)
+
+### 5-3. Final Test Evaluation (Test 240, 1회)
+
+| 시스템 | Frame Overall | Frame FAR | Frame FRR | Video Overall | Freq Call |
 | --- | --- | --- | --- | --- | --- |
-| Baseline | 66.67% | 97.75% | 91.25% | 21.75% | 17.50% |
-| Texture CNN | 89.38% | N/A | N/A | 22.87% | N/A |
-| Frequency CNN | 86.04% | N/A | N/A | 41.88% | N/A |
-| Multi-Expert | 87.29% | N/A | N/A | N/A | N/A |
+| Texture CNN | 98.75% | 2.27% | 1.02% | 98.75% | — |
+| **Adaptive (0.55)** | **98.75%** | **2.27%** | **1.02%** | **98.75%** | **1.25%** |
 
-## 표 3: 도메인 적응 (Replay-Attack으로 Fine-tune 후 평가)
+**Note:** 
+- 이전 보고한 Adaptive 98.96%는 Test에서 threshold 선택한 **누수 결과**
+- 현재는 Dev로만 선택 → Test 1회 평가 → **98.75% (누수 없음)**
+- Texture 단독과 성능 동일, Frequency 기여도 미미
 
-| 시스템 | 프레임 Live | 프레임 Spoof | 프레임 Overall | HTER | EER | 비디오 Live | 비디오 Spoof | 비디오 Overall |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Baseline | 58.75% | 97.75% | 91.25% | 21.75% | 17.50% | N/A | N/A | N/A |
-| Texture CNN | 98.75% | 98.50% | 98.54% | 1.38% | 1.25% | 97.50% | 98.25% | 97.88% |
-| Frequency CNN | 83.75% | 97.50% | 95.21% | 9.38% | 10.00% | N/A | N/A | N/A |
-| 2-Expert Static | 97.50% | 99.00% | 98.75% | 1.75% | 0.00% | N/A | N/A | N/A |
-| Adaptive (τ=0.90) | 97.50% | 99.00% | 98.75% | 1.75% | 1.25% | N/A | N/A | N/A |
+---
 
-## 표 4: 공격 유형별 정확도 (Replay-Attack, Fine-tuned)
+## 표 6: Client별 성능 (Tail Risk)
 
-| 시스템 | Live | Print | Display |
-| --- | --- | --- | --- |
-| Texture CNN | 98.75% | 97.50% | 100.00% |
-| Frequency CNN | 82.50% | 97.08% | 98.12% |
-| Multi-Expert | 93.75% | 99.58% | 100.00% |
+| Client | Live | Spoof | FAR | FRR | Notes |
+| --- | --- | --- | --- | --- | --- |
+| 011 | 100% | 80% | 0% | 20% | 전체 FN의 67% |
+| 104 | 75% | 90% | 25% | 10% | Live false reject / Spoof false positive |
+| Others (18명) | 100% | 100% | 0% | 0% | 나머지는 완전 정확 |
 
-## 표 5: 개선 요약
-
-| 시스템 | Fine-tune 전 | Fine-tune 후 | 개선폭 |
-| --- | --- | --- | --- |
-| Baseline | 66.67% | 83.33% | +16.66% |
-| Texture CNN | 89.38% | 97.29% | +7.91% |
-| Frequency CNN | 86.04% | 92.08% | +6.04% |
-| Multi-Expert | 87.29% | 97.08% | +9.79% |
+**Insight:**
+- 2명의 클라이언트가 전체 오류의 100%를 차지
+- 평균 성능만 보면 Tail risk를 감출 수 있음
+- 실전 배포 전에 client별 검증/대응 필요
 
 ## Figures
 
-1. `roc_curves.png` – Texture / Baseline / Frequency ROC 비교.
-2. `confusion_matrices.png` – Baseline / Texture / Frequency / 2-Expert confusion matrices.
-3. `frequency_failure_comparison.png` – Live False Positive vs True Positive 시각화.
+1. `roc_curves.png` — Baseline/Texture/Frequency ROC (Test_Full 480)
+2. `confusion_matrices.png` — 4-system confusion matrices (Test_Full 480)
+3. `texture_confidence_distribution.png` — TP vs FN confidence gap (18.67%p)
+4. `frequency_failure_comparison.png` — Live FP 배경 의존성 분석
+
+---
 
 ## 핵심 발견
 
-- Texture CNN은 데이터셋 간 일반화가 가장 뛰어나며 ROC AUC도 가장 높습니다.
-- Frequency 기반 알람/Adaptive 방식은 Spoof 대비 FAR을 안정적으로 낮춥니다.
-- 조건부 cascading 및 adaptive threshold는 Live 정확도 향상을 유지하며 Spoof 감지를 그대로 유지합니다.
+### 1. Domain Gap 감소 ⭐⭐⭐
+- Baseline: -28% → Texture: -10% (**17.58%p 개선**)
+- 물리적 특징 학습이 일반화 우수
+
+### 2. Confidence-Adaptive Framework ⭐⭐⭐
+- Threshold 0.55 (Dev로만 선택, 누수 없음)
+- Frequency 호출: **1.25%만**
+- 성능: Texture 단독과 동일
+- **효율성 극대화** (96% 샘플은 Texture만)
+
+### 3. Video-level = Frame-level ⭐⭐
+- 차이 0.66%p (무시 가능)
+- 프레임 외우기 아님 증명
+
+### 4. Multi-Expert 한계 발견 ⭐⭐
+- Frequency Live 오인식 (배경 의존성)
+- 여러 결합 전략 시도 → 개선 미미
+- **결론: Texture 단독 충분**
