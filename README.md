@@ -239,22 +239,19 @@ python CORE/training/train_texture2.py
 ```
 Face Anti-Spoofing System with Disagreement Fusion
 3-Expert Ensemble achieving 99.58% on Replay-Attack
-Repository: [Your Repository URL]
+Repository: https://github.com/leejunyoung0610/face-antispoofing
 ```
 
-## 🤝 Contributing
-
-이슈 및 풀 리퀘스트 환영합니다!
 
 ## 📄 License
 
-본 프로젝트는 연구 및 교육 목적으로 제공됩니다.
+개인 프로젝트 진행입니다
 
 ---
 
 ## 📞 Contact
 
-질문이나 협업 문의는 이슈로 남겨주세요.
+이슈 제기 환영합니다.
 
 ---
 
