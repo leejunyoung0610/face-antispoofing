@@ -207,7 +207,7 @@ python CORE/training/train_texture2.py
    - 13%만 추가 검증으로 99.58% 달성
    
 2. **Multi-scale의 재발견**
-   - R=1,2,3 조합이 R=1,2,4보다 우수
+   - R=1,2,4 조합이 R=1,2,3보다 우수 (추가 연구 예정)
    - 거친 텍스처(R=3)의 중요성 입증
    
 3. **명시적 vs 암묵적 특징 비교**
@@ -245,7 +245,8 @@ Repository: https://github.com/leejunyoung0610/face-antispoofing
 
 ## 📄 License
 
-개인 프로젝트 진행입니다
+개인 프로젝트 진행입니다.
+추가적인 개발 예정이 있습니다.
 
 ---
 
