@@ -1,0 +1,21 @@
+Method,Index,Client,Video,Label
+T+F_Weight_0.7,253,"attack_print_client011_session01_highdef_photo_controlled.mov', 'label': 1}","attack_print_client011_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+F_Weight_0.7,361,"attack_print_client104_session01_highdef_photo_controlled.mov', 'label': 1}","attack_print_client104_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+F_Weight_0.7,416,"attack_highdef_client011_session01_highdef_photo_controlled.mov', 'label': 1}","attack_highdef_client011_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+F_Weight_0.7,453,"attack_print_client011_session01_highdef_photo_controlled.mov', 'label': 1}","attack_print_client011_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+F_Weight_0.7,463,"attack_highdef_client011_session01_highdef_photo_adverse.mov', 'label': 1}","attack_highdef_client011_session01_highdef_photo_adverse.mov', 'label': 1}",Spoof
+T+F_Weight_0.8,253,"attack_print_client011_session01_highdef_photo_controlled.mov', 'label': 1}","attack_print_client011_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+F_Weight_0.8,361,"attack_print_client104_session01_highdef_photo_controlled.mov', 'label': 1}","attack_print_client104_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+F_Weight_0.8,416,"attack_highdef_client011_session01_highdef_photo_controlled.mov', 'label': 1}","attack_highdef_client011_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+F_Weight_0.8,453,"attack_print_client011_session01_highdef_photo_controlled.mov', 'label': 1}","attack_print_client011_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+F_Weight_0.8,463,"attack_highdef_client011_session01_highdef_photo_adverse.mov', 'label': 1}","attack_highdef_client011_session01_highdef_photo_adverse.mov', 'label': 1}",Spoof
+T+F_Cascading,253,"attack_print_client011_session01_highdef_photo_controlled.mov', 'label': 1}","attack_print_client011_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+F_Cascading,361,"attack_print_client104_session01_highdef_photo_controlled.mov', 'label': 1}","attack_print_client104_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+F_Cascading,416,"attack_highdef_client011_session01_highdef_photo_controlled.mov', 'label': 1}","attack_highdef_client011_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+F_Cascading,453,"attack_print_client011_session01_highdef_photo_controlled.mov', 'label': 1}","attack_print_client011_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+F_Cascading,463,"attack_highdef_client011_session01_highdef_photo_adverse.mov', 'label': 1}","attack_highdef_client011_session01_highdef_photo_adverse.mov', 'label': 1}",Spoof
+T+L_Late_Fusion,6,"client104_session01_webcam_authenticate_adverse_2.mov', 'label': 0}","client104_session01_webcam_authenticate_adverse_2.mov', 'label': 0}",Live
+T+L_Late_Fusion,225,"attack_highdef_client011_session01_highdef_video_adverse.mov', 'label': 1}","attack_highdef_client011_session01_highdef_video_adverse.mov', 'label': 1}",Spoof
+T+L_Late_Fusion,361,"attack_print_client104_session01_highdef_photo_controlled.mov', 'label': 1}","attack_print_client104_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+L_Late_Fusion,416,"attack_highdef_client011_session01_highdef_photo_controlled.mov', 'label': 1}","attack_highdef_client011_session01_highdef_photo_controlled.mov', 'label': 1}",Spoof
+T+L_Late_Fusion,425,"attack_highdef_client011_session01_highdef_video_adverse.mov', 'label': 1}","attack_highdef_client011_session01_highdef_video_adverse.mov', 'label': 1}",Spoof

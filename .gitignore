@@ -1,14 +1,35 @@
-venv/
+# Data
+data/
+*.pkl
+*.pth
+
+# Archive
+ARCHIVE/
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+venv/
+.env
+
+# OS
 .DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Output
+output/
+results/
+notebooks/
+images/
+thirdparty/
+
+# Temp
+*.tmp
 *.log
-data/
-*.mp4
-*.mov
-checkpoints/
-*.pth
-*.png
-*.jpg
-*.jpeg
-.ipynb_checkpoints/

@@ -1,0 +1,8 @@
+Metric,Replay-Attack,MSU-MFSD
+Overall Accuracy,99.58% (478/480),99.29% (278/280)
+Live Accuracy,100.00% (80/80),100.00% (70/70)
+Spoof Accuracy,99.50% (398/400),99.05% (208/210)
+FAR (False Accept Rate),0.00%,0.00%
+FRR (False Reject Rate),0.50%,0.95%
+HTER,0.25%,0.48%
+Failed Cases,"2 (Client 011, 104)",2

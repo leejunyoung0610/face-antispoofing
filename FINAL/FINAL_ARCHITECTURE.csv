@@ -1,0 +1,6 @@
+Component,Description,Role
+Expert 1: Texture CNN,"EfficientNet-B0, RGB input, 98.57%",Primary RGB pattern classifier
+Expert 2: Multi-scale LBP,"R=1,2,3 + Random Forest, 97.08%",Texture pattern signal expert
+Expert 3: Texture2 CNN (Face-only),"EfficientNet-B0, Face crop, 95.21%",Disagreement backup for face crops
+Fusion Strategy,Disagreement-based 3-expert voting,Intelligent ensemble coordinator
+Threshold,0.2 probability difference,Trigger for Texture2 activation

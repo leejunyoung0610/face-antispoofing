@@ -1,0 +1,7 @@
+Model,Replay-Attack (%),MSU-MFSD (%),Features,Type
+Texture CNN,98.57,,"150,528 (RGB pixels)",CNN
+Multi-scale LBP,97.08,,54 (LBP histogram),Traditional ML
+Frequency CNN,89.79,,"150,528 (FFT)",CNN
+Texture2 CNN,95.21,,"150,528 (RGB face crop)",CNN
+Late Fusion (T+L),98.96,96.79,Texture + LBP,Ensemble
+Disagreement Fusion,99.58,99.29,Texture + LBP + Texture2,Ensemble
