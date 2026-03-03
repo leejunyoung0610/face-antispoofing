@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from models.frequency_expert import FrequencyExpert
+from models.texture2_expert import Texture2Expert
 from models.texture_expert import TextureExpert
 
 
@@ -15,12 +15,12 @@ class AlarmSensorSystem(nn.Module):
     def __init__(self, alarm_threshold: float = 0.9):
         super().__init__()
         self.texture = TextureExpert()
-        self.frequency = FrequencyExpert()
+        self.texture2 = Texture2Expert()
         self.alarm_threshold = alarm_threshold
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         t_out = self.texture(x)
-        f_out = self.frequency(x)
+        f_out = self.texture2(x)
 
         t_probs = F.softmax(t_out, dim=1)
         f_probs = F.softmax(f_out, dim=1)

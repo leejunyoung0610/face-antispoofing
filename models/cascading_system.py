@@ -6,10 +6,10 @@ from torch import nn
 class CascadingSystem(nn.Module):
     """Texture가 확신하지 못할 때 Frequency를 보완하여 결합."""
 
-    def __init__(self, texture_model: nn.Module, frequency_model: nn.Module, threshold: float = 0.95):
+    def __init__(self, texture_model: nn.Module, texture2_model: nn.Module, threshold: float = 0.95):
         super().__init__()
         self.texture = texture_model
-        self.frequency = frequency_model
+        self.texture2 = texture2_param_model
         self.threshold = threshold
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -21,6 +21,6 @@ class CascadingSystem(nn.Module):
             if t_conf[i] > self.threshold:
                 result[i] = t_out[i]
             else:
-                f_out = self.frequency(x[i : i + 1])
+                f_out = self.texture2(x[i : i + 1])
                 result[i] = 0.7 * t_out[i] + 0.3 * f_out[0]
         return result

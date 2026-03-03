@@ -25,15 +25,15 @@ class GatingModule(nn.Module):
         self,
         logits: Union[Sequence[torch.Tensor], torch.Tensor],
         texture_logits: torch.Tensor = None,
-        frequency_logits: torch.Tensor = None,
+        texture2_logits: torch.Tensor = None,
         depth_logits: torch.Tensor = None,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         if isinstance(logits, Sequence):
             logits_list = logits
         else:
-            if None in (texture_logits, frequency_logits, depth_logits):
+            if None in (texture_logits, texture2_logits, depth_logits):
                 raise ValueError("Provide either logits list or all individual tensors.")
-            logits_list = [logits, texture_logits, frequency_logits]
+            logits_list = [logits, texture_logits, texture2_logits]
         if len(logits_list) != self.num_experts:
             raise ValueError("Number of logits must match num_experts.")
         probs_list = [F.softmax(l, dim=-1) for l in logits_list]

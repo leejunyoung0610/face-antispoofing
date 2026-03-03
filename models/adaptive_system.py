@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from models.frequency_expert import FrequencyExpert
+from models.texture2_expert import Texture2Expert
 from models.texture_expert import TextureExpert
 
 
@@ -16,7 +16,7 @@ class AdaptiveSystem(nn.Module):
     def __init__(self, confidence_threshold: float = 0.90):
         super().__init__()
         self.texture = TextureExpert()
-        self.frequency = FrequencyExpert()
+        self.texture2 = Texture2Expert()
         self.threshold = float(confidence_threshold)
 
     def forward(self, x: torch.Tensor):
@@ -24,14 +24,14 @@ class AdaptiveSystem(nn.Module):
         t_probs = F.softmax(t_logits, dim=1)
         t_conf, _ = t_probs.max(dim=1)  # (B,)
 
-        use_frequency = t_conf <= self.threshold
+        use_texture2 = t_conf <= self.threshold
         output = t_logits.clone()
 
-        if use_frequency.any():
-            x_low = x[use_frequency]
-            f_logits_low = self.frequency(x_low)
-            output[use_frequency] = 0.7 * t_logits[use_frequency] + 0.3 * f_logits_low
+        if use_texture2.any():
+            x_low = x[use_texture2]
+            f_logits_low = self.texture2(x_low)
+            output[use_texture2] = 0.7 * t_logits[use_texture2] + 0.3 * f_logits_low
 
-        freq_usage = use_frequency.float().mean()
+        freq_usage = use_texture2.float().mean()
         return output, freq_usage
 

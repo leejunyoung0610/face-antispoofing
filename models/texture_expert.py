@@ -6,9 +6,9 @@ import timm
 class TextureExpert(nn.Module):
     """EfficientNet-B0 기반 texture expert."""
 
-    def __init__(self, dropout: float = 0.3):
+    def __init__(self, dropout: float = 0.3, pretrained: bool = False):
         super().__init__()
-        self.backbone = timm.create_model("efficientnet_b0", pretrained=True)
+        self.backbone = timm.create_model("efficientnet_b0", pretrained=pretrained)
         in_features = self.backbone.classifier.in_features
         self.backbone.classifier = nn.Sequential(
             nn.Linear(in_features, 128),

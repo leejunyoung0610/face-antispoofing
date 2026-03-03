@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from models.baseline import BaselineModel
-from models.frequency_expert import FrequencyExpert
+from models.texture2_expert import Texture2Expert
 from models.texture_expert import TextureExpert
 from utils.dataset import MSUMFSDDataset
 
@@ -27,19 +27,19 @@ def precompute():
 
     baseline = BaselineModel().to(device)
     texture = TextureExpert().to(device)
-    frequency = FrequencyExpert().to(device)
+    texture2 = Texture2Expert().to(device)
 
     baseline.load_state_dict(torch.load("checkpoints/best_model.pth", map_location=device))
     texture.load_state_dict(
         torch.load("checkpoints/texture_expert/best_model.pth", map_location=device)
     )
-    frequency.load_state_dict(
-        torch.load("checkpoints/frequency_expert/best_model.pth", map_location=device)
+    texture2.load_state_dict(
+        torch.load("checkpoints/texture2_expert/best_model.pth", map_location=device)
     )
 
     baseline.eval()
     texture.eval()
-    frequency.eval()
+    texture2.eval()
 
     cache = {"train": [], "test": []}
 
@@ -53,13 +53,13 @@ def precompute():
             with torch.inference_mode():
                 b_logits = baseline(frames)
                 t_logits = texture(raw)
-                f_logits = frequency(raw)
+                f_logits = texture2(raw)
             for j in range(len(labels)):
                 cache[split].append(
                     {
                         "baseline": b_logits[j].cpu(),
                         "texture": t_logits[j].cpu(),
-                        "frequency": f_logits[j].cpu(),
+                        "texture2": f_logits[j].cpu(),
                         "label": int(labels[j]),
                     }
                 )

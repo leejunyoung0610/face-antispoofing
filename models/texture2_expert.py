@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import timm
 
 
-class FrequencyExpert(nn.Module):
+class Texture2Expert(nn.Module):
     """CNN expert using grayscale + FFT + laplacian channels."""
 
     def __init__(self, dropout: float = 0.3):
@@ -44,7 +44,7 @@ class FrequencyExpert(nn.Module):
 if __name__ == "__main__":
     import torch
 
-    model = FrequencyExpert()
+    model = Texture2Expert()
     sample = torch.randn(2, 3, 224, 224)
     logits = model(sample)
     print("Output shape:", logits.shape)

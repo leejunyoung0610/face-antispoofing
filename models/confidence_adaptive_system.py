@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from models.frequency_expert import FrequencyExpert
+from models.texture2_expert import Texture2Expert
 from models.texture_expert import TextureExpert
 
 
@@ -12,7 +12,7 @@ class ConfidenceAdaptiveSystem(nn.Module):
     def __init__(self, threshold: float = 0.8):
         super().__init__()
         self.texture = TextureExpert()
-        self.frequency = FrequencyExpert()
+        self.texture2 = Texture2Expert()
         self.threshold = threshold
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -22,6 +22,6 @@ class ConfidenceAdaptiveSystem(nn.Module):
         low_conf = conf < self.threshold
         result = t_out.clone()
         if low_conf.any():
-            freq_out = self.frequency(x[low_conf])
+            freq_out = self.texture2(x[low_conf])
             result[low_conf] = freq_out
         return result

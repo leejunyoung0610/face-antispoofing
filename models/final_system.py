@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from models.frequency_expert import FrequencyExpert
+from models.texture2_expert import Texture2Expert
 from models.gating import GatingModule
 from models.texture_expert import TextureExpert
 
@@ -16,7 +16,7 @@ class FinalSystem(nn.Module):
     def __init__(self):
         super().__init__()
         self.texture = TextureExpert()
-        self.frequency = FrequencyExpert()
+        self.texture2 = Texture2Expert()
         self.gating = GatingModule(num_experts=2)
 
         # 기본은 균등 결합에 가깝게 시작(가중치/신뢰도 네트워크 0 초기화)
@@ -28,7 +28,7 @@ class FinalSystem(nn.Module):
 
     def forward(self, x: torch.Tensor):
         t_out = self.texture(x)
-        f_out = self.frequency(x)
+        f_out = self.texture2(x)
         combined, weights = self.gating([t_out, f_out])
         return combined, weights
 
